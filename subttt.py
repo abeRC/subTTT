@@ -14,6 +14,7 @@ fn_and_delay=[]
 options=[]
 
 #Should options be a dictionary/set?
+###TODO: remove assertions that don't trigger and turn the rest into exceptions
 ###TODO: verify if we need to work with bytes or if this gizmo is comprehensive enough
 ###TODO: compatibility with other formats
 
@@ -245,7 +246,7 @@ def main():
                         newf.write(fix(line, delay).strip()+"\r\n")
                     except AssertionError as AE:
                         print("Assertion failed here:",line)
-                        print("error: "+AE.args+"\n")
+                        print("error: "+str(AE.args)+"\n")
                         newf.write(line+"\n") # hopefully this won't break anything
                 else:
                     newf.write(line+"\n")

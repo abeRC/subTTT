@@ -29,6 +29,6 @@ Accepted options:
 There ought to be.
 
 ## TODO
-* add --fix0sec to fix 0 second subtitles
+* remove unnecessary assertions and turn the rest into exceptions
 * verify if we need to work with bytes or if this gizmo is comprehensive enough
 * compatibility with other formats
