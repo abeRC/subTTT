@@ -13,8 +13,7 @@ encoding_list = ["utf_8", "utf_16", "cp65001","utf8-ignore", "ascii", "gb2312", 
 fn_and_delay=[]
 options=[]
 
-
-###TODO: add --fix0sec to fix 0 second subtitles
+#Should options be a dictionary/set?
 ###TODO: verify if we need to work with bytes or if this gizmo is comprehensive enough
 ###TODO: compatibility with other formats
 
@@ -70,7 +69,7 @@ class Time:
     def __int__(self) -> int:
         return self.ms + self.sec*1000 + self.min*60*1000 + self.hour*60*60*1000
     def to_ms(self) -> int:
-        return __int__(self)
+        return self.__int__()
         
     def __add__(self, value):
         new = Time()
@@ -99,12 +98,20 @@ def fix(coisa: str, delay: Time) -> str:
     assert len(timesraw) == 2, "list of times has the wrong size; detection failure"
     times=[]
     
-    # create list of Time objects from raw string
+    #Create list of Time objects from raw string.
     for timeraw in timesraw:
         hourminsecms = re.split(":"+regexor+",", timeraw)
         times.append( Time( *[int(item) for item in hourminsecms]) )
-        
-    return (" "+arrow+" ").join([str(time+delay) for time in times])+"\n" # add delay to time, turn into str and join with arrow
+    
+    #Turn 0s subtitles into 1s subtitles.
+    if "--fix0sec" in options:
+        if times[0].to_ms() == times[1].to_ms():
+            if "*" in coisa:
+                print("got here!")
+            times[1] += Time(0, 0, 1, 0)
+    
+    #Add delay to time, turn into str and join with arrow.
+    return (" "+arrow+" ").join([str(time+delay) for time in times])+"\n"
 
 def usage():
     print("""subTTT: Subtitle Timestamp Tweaker Tool v0.9
@@ -139,8 +146,8 @@ def test(argv: list):
         else:
             fn_and_delay.append(elem)
     
-    print("fn and delay:", fn_and_delay)
-    print("options", options)
+    print("fn and delay:", fn_and_delay) ###debug
+    print("options:", options) ###debug
     
     if len(fn_and_delay) != 2:
         print("Incorrect arguments.")
@@ -247,5 +254,4 @@ def main():
                 print("UnicodeDecodeError\nThis shouldn't happen.")
                 break
 
-                    
 main()
