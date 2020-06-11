@@ -115,7 +115,7 @@ The time translation (forward or backward shift) should be given as a float
 and in seconds. Minus signs are interpreted as a backward shift (so the 
 subtitles will be shown earlier than before).
         
-Usage: subttt [OPTION]... SRTFILE SHIFT
+Usage: python subttt.py [OPTION]... SRTFILE SHIFT
   -h, --help                 display this help and exit
   -v, --version              output version information and exit
       --replace              replace the original file\n""")
