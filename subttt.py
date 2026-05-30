@@ -7,6 +7,7 @@ import math
 
 arrow = "-->"
 regexor = "|"
+newline_char = "\n"
 valid_options = ["--replace", "--fix0sec", "--version"]
 encoding_list = ["utf_8", "utf_16", "cp65001","utf8-ignore", "ascii", "gb2312", "iso2022_jp", "euc_kr", "latin_1", "iso8859_2", "iso8859_3", "iso8859_4", "iso8859_5", "iso8859_6", "iso8859_7", "iso8859_8", "iso8859_9", "iso8859_10", "iso8859_11", "iso8859_12", "iso8859_13", "iso8859_14", "iso8859_15", "iso8859_16"]
 
@@ -112,7 +113,7 @@ def fix(coisa: str, delay: Time) -> str:
             times[1] += Time(0, 0, 1, 0)
     
     #Add delay to time, turn into str and join with arrow.
-    return (" "+arrow+" ").join([str(time+delay) for time in times])+"\n"
+    return (" "+arrow+" ").join([str(time+delay) for time in times]) + newline_char
 
 def usage():
     print("""subTTT: Subtitle Timestamp Tweaker Tool v0.9
@@ -128,7 +129,7 @@ Usage: python subttt.py [OPTION]... SRTFILE SHIFT
   -v, --version              output version information and exit
       --replace              replace the original file\n""")
     
-def test(argv: list):
+def verify_initial(argv: list):
     global fn_and_delay, options, right_enc, right_eh
     
     if len(sys.argv) < 3:
@@ -215,7 +216,7 @@ def main():
         exit(0)
         
     #Verify if something's wrong.
-    test(sys.argv) 
+    verify_initial(sys.argv) 
     
     #Fetch filename and delay.
     filename = fn_and_delay[0]
@@ -230,9 +231,9 @@ def main():
     if "--replace" not in options:
         dotsplit = filename.split(".")
         if len(dotsplit) >= 2 and len(dotsplit[-1]) <= 3:
-            filename = ".".join(dotsplit[:-1]) + "NEW." + dotsplit[-1]
+            filename = ".".join(dotsplit[:-1]) + "_mod." + dotsplit[-1]
         else:
-            filename = filename+"NEW"
+            filename = filename+"_mod"
             
     #Do the time tweaking.
     with open(filename, "w", encoding = right_enc, errors = right_eh) as newf:
@@ -243,16 +244,17 @@ def main():
             try:
                 if arrow in line:
                     try:
-                        newf.write(fix(line, delay).strip()+"\r\n")
+                        newf.write(fix(line, delay).strip()+newline_char)
                     except AssertionError as AE:
                         print("Assertion failed here:",line)
-                        print("error: "+str(AE.args)+"\n")
+                        print("error: "+str(AE.args)+newline_char)
                         newf.write(line+"\n") # hopefully this won't break anything
                 else:
-                    newf.write(line+"\n")
+                    newf.write(line+newline_char)
                     
             except UnicodeDecodeError:
                 print("UnicodeDecodeError\nThis shouldn't happen.")
                 break
+        print(f"Finished! Output written into {filename}")
 
 main()
