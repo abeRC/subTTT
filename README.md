@@ -1,34 +1,43 @@
-# subTTT: Subtitle Timestamp Tweaker Tool v0.9
+# subTTT: Subtitle Timestamp Tweaker Tool
 
 ## Overview
-This program applies a time translation to the timestamps in SubRip subtitle 
-files (.srt format).
-The time translation (forward or backward shift) should be given as a float
-and in seconds. Minus signs are interpreted as a backward shift (so the 
-subtitles will be shown earlier than before).
 
+This program applies a time translation and/or time-scale factor to the timestamps in SubRip subtitle files (.srt format).
+The time translation (forward or backward shift) should be given as an int
+representing milliseconds. Negative values are supported.
 
-Currently, there is only compatibility with subtitle files that have timestamps like this:
+The speed value represents how much faster you want the subtitles to be. This value should be given as a float. The reciprocal of this value will be used as a scaling factor to dilate/contract all timestamps.
+
+It is expected that all timestamps are like this (standard SubRip format):
 
 `00:01:43,108 --> 00:01:44,796`
 
+## Usage
 
-## Installation and Usage
-There is none. Just download the script and run it with
-`python subttt.py [OPTIONS]... SRTFILE SHIFT`.
+Download the script and run it with:
 
-Accepted options: 
-``` 
-  -h, --help                 display this help and exit
-  -v, --version              output version information and exit
-      --replace              replace the original file
+```bash
+python subttt.py srtfile [--speed s] [--offset o] [--replace] [--fix0sec]
 ```
 
+Accepted options: 
 
-## Bugs
-There ought to be.
+```
+positional arguments:
+  srtfile          .srt subtitle file (str)
+optional arguments:
+  -h, --help       show this help message and exit
+  --speed SPEED    multiplicative time-scale factor (float); 1.0 is regular
+                   speed, 2.0 is doubly fast.
+  --offset OFFSET  additive time-offset factor in ms (int); 0 means no offset;
+                   accepts negative values
+  --replace        replace the original file
+  --fix0sec        fix 0-second duration lines
+  --debug          enable debug messages
+  --version, -v    print version information
+```
 
 ## TODO
-* remove unnecessary assertions and turn the rest into exceptions
-* verify if we need to work with bytes or if this gizmo is comprehensive enough
-* compatibility with other formats
+
+* GUI
+* Binaries for Windows.
